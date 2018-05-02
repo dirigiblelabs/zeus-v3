@@ -12,7 +12,7 @@ var extensions = require('core/v3/extensions');
 var response = require('http/v3/response');
 
 var perspectives = [];
-var perspectiveExtensions = extensions.getExtensions('ide-perspective');
+var perspectiveExtensions = extensions.getExtensions('zeus-perspective');
 
 for (var i = 0; i < perspectiveExtensions.length; i++) {
     var perspectiveExtension = require(perspectiveExtensions[i]);

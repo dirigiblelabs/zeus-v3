@@ -12,7 +12,7 @@ var extensions = require('core/v3/extensions');
 var response = require('http/v3/response');
 
 var views = [];
-var viewExtensions = extensions.getExtensions('ide-view');
+var viewExtensions = extensions.getExtensions('zeus-view');
 
 for (var i = 0; i < viewExtensions.length; i++) {
     var viewExtension = require(viewExtensions[i]);

@@ -1,7 +1,7 @@
 # Zeus
 
 [![Eclipse License](http://img.shields.io/badge/license-Eclipse-brightgreen.svg)](LICENSE)
-[![GitHub contributors](https://img.shields.io/github/contributors/dirigiblelabs/zeus-v3.svg)](https://github.com/dirigiblelabs/zeus-v3/graphs/contributors)
+[![GitHub contributors](https://img.shields.io/github/contributors/dirigiblelabs/zeus-v3-core.svg)](https://github.com/dirigiblelabs/zeus-v3-core/graphs/contributors)
 
 
 ## Overview

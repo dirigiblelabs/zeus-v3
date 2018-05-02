@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Eclipse Dirigible &trade; | Zeus </title>
+    <title>Zeus' Chariot | Launchpad </title>
 
 	<!-- Twitter Bootstrap with Theme Support -->
 	<link type="text/css" rel="stylesheet" href="/services/v3/core/theme/bootstrap.min.css">
@@ -69,7 +69,7 @@
 		.controller('WorkbenchController', ['Layouts', function (Layouts) {
 
 			this.layoutModel = {
-				views: ['workspace', 'import', 'properties', 'console', 'preview'],
+				views: ['launchpad'],
 				events: {
 					'workspace.file.open': function(msg){
 						Layouts.manager.openEditor(msg.data.file.path, msg.data.file.label, msg.data.file.contentType, msg.data.editor);

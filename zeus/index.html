@@ -43,19 +43,21 @@
 		<div class="sidebar list-group" sidebar active="Workbench"></div>
 		<div class="plane">
 			<div ng-repeat="next in launchpad" ng-cloak>
-				<div class="row" style="padding: 1em; background: #cecece; border-radius: 100px;">
+				<div class="row" style="padding: 1em; background: #5b5b5d; border-radius: 100px;">
 					<div class="col-md-{{item.size}}" ng-repeat="item in next.items">
 						<a href="{{item.location}}">
 							<img class="card-img-top" src="{{item.image}}" style="border-radius: 100px;">
 						</a>
 						<div class="text-center">
 							<h3><b>{{item.title}}</b></h3>
+							<br>
 							<p>{{item.description}}</p>
-							<a href="{{item.location}}" class="btn btn-primary">Go to {{item.title}}</a>
+							<br>
+							<a href="{{item.location}}" class="btn btn-lg btn-primary">Go to {{item.title}}</a>
 						</div>
 					</div>
 				</div>
-				<hr>
+				<br>
 			</div>
 		</div>
 	</div>

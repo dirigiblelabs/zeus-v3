@@ -55,20 +55,20 @@ angular.module('ideUiCore', ['ngResource'])
 		reload: function(){
 			location.reload();
 		}
-	};
+	}
 }])
 .service('Perspectives', ['$resource', function($resource){
-	return $resource('/services/v3/js/zeus/api/perspectives.js');
+	return $resource('/services/v3/js/zeus/api/shell/perspectives.js');
 }])
 .service('Menu', ['$resource', function($resource){
-	return $resource('/services/v3/js/zeus/api/menu.js');
+	return $resource('/services/v3/js/zeus/api/shell/menu.js');
 }])
 .service('User', ['$http', function($http){
 	return {
 		get: function(){
 			var user = {};
 			$http({
-				url: '../../js/ide/services/user-name.js',
+				url: '/services/v3/js/ide/services/user-name.js',
 				method: 'GET'
 			}).success(function(data){
 				user.name = data;
@@ -77,18 +77,77 @@ angular.module('ideUiCore', ['ngResource'])
 		}
 	};
 }])
+.provider('Editors', function(){
+	var editorProviders = {};
+	var editorsForContentType = {};
+	var editorsList = [];
+	editorsList.forEach(function(editor){
+		editorProviders[editor.id] = editor.link;
+		editor.contentTypes.forEach(function(contentType){
+			if (!editorsForContentType[contentType]) {
+				editorsForContentType[contentType] = [editor.id];
+			} else {
+				editorsForContentType[contentType].push(editor.id);
+			}
+		});
+	});
+	
+	var defaultEditorId = this.defaultEditorId = "orion";
+	this.$get = [function editorsFactory() {
+ 		
+ 		return {
+			defaultEditorId: defaultEditorId,
+			editorProviders: editorProviders,
+			editorsForContentType: editorsForContentType
+		};
+	}];
+})
 /**
  * Creates a map object associating a view factory function with a name (id)
  */
 .provider('ViewFactories', function(){
+	var editors = this.editors;
 	var self = this;
 	this.factories = {
-		"frame": function(container, componentState){
-			container.setTitle(componentState.label || 'View');
-				$('<iframe>').attr('src', componentState.path).appendTo(container.getElement().empty());
-		}
+			"frame": function(container, componentState){
+				container.setTitle(componentState.label || 'View');
+					$('<iframe>').attr('src', componentState.path).appendTo(container.getElement().empty());
+			},
+			"editor": function(container, componentState){
+				/* Improvement hint: Instead of hardcoding ?file=.. use URL template for the editor provider values 
+				 * and then replace the placeholders in the template with matching properties from the componentState.
+				 * This will make it easy to replace the query string property if needed or provide additional 
+				 * (editor-specific) parameters easily.
+				 */
+				(function(componentState){
+					var src, editorPath;
+					if(!componentState.editorId || Object.keys(self.editors.editorProviders).indexOf(componentState.editorId) < 0) {
+						if (Object.keys(self.editors.editorsForContentType).indexOf(componentState.contentType) < 0) {
+							editorPath = self.editors.editorProviders[self.editors.defaultEditorId];
+						} else {
+							componentState.editorId = self.editors.editorsForContentType[componentState.contentType][0];
+							editorPath = self.editors.editorProviders[componentState.editorId];
+						}
+					}
+					else
+						editorPath = self.editors.editorProviders[componentState.editorId];
+					if (componentState.path) {
+						if (componentState.editorId === 'flowable')
+							src = editorPath + componentState.path;
+						else 
+							src = editorPath + '?file=' + componentState.path;
+						if(componentState.contentType && componentState.editorId !== 'flowable')
+							src += "&contentType="+componentState.contentType;
+					} else {
+						container.setTitle("Welcome");
+						src = '/services/v3/web/shell/welcome.html';
+					}
+					$('<iframe>').attr('src', src).appendTo(container.getElement().empty());
+				})(componentState, this);
+			}.bind(self)
 	};
-	this.$get = [function viewFactoriesFactory() {
+	this.$get = ['Editors', function viewFactoriesFactory(Editors) {
+		this.editors = Editors;
 		return this.factories;
 	}];
 })
@@ -104,7 +163,7 @@ angular.module('ideUiCore', ['ngResource'])
 		ViewRegistrySvc.factory(factoryName, ViewFactories[factoryName]);
 	});		
 	var get = function(){
-		return $resource('/services/v3/js/zeus/api/views.js').query().$promise
+		return $resource('/services/v3/js/zeus/api/shell/views.js').query().$promise
 				.then(function(data){
 					data = data.map(function(v){
 						v.id = v.id || v.name.toLowerCase();
@@ -112,7 +171,7 @@ angular.module('ideUiCore', ['ngResource'])
 						v.factory = v.factory || 'frame';
 						v.settings = {
 							"path": v.link
-						};
+						}
 						v.region = v.region || 'left-top';
 						return v;
 					});
@@ -149,21 +208,8 @@ angular.module('ideUiCore', ['ngResource'])
 			}
 			if(!scope.menu && url)
 				loadMenu.call(scope);
-			scope.menuClick = function(item, subItem) {
-				if(item.name === 'Show View'){
-					// open view
-					Layouts.manager.openView(subItem.name.toLowerCase());
-				} else if(item.name === 'Open Perspective'){
-					// open perspective`
-					window.open(subItem.onClick.substring(subItem.onClick.indexOf('(')+2, subItem.onClick.indexOf(',')-1));//TODO: change the menu service ot provide paths instead
-				} else {
-					if (item.event === 'open') {
-						window.open(item.data, '_blank');
-					} else {
-						//eval(item.onClick);
-						messageHub.send(item.event, item.data, true);	
-					}
-				}
+			scope.menuClick = function(item) {
+				Layouts.manager.openView(item.id);
 			};
 			scope.selectTheme = function(themeName){
 				Theme.changeTheme(themeName);
@@ -173,7 +219,7 @@ angular.module('ideUiCore', ['ngResource'])
 			scope.user = User.get();
 		},
 		templateUrl: '/services/v3/web/zeus/resources/templates/menu.html'
-	};
+	}
 }])
 .directive('sidebar', ['Perspectives', function(Perspectives){
 	return {

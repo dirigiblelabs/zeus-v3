@@ -11,15 +11,17 @@
 var extensions = require('core/v3/extensions');
 var response = require('http/v3/response');
 
-var mainmenu = [];
-var menuExtensions = extensions.getExtensions('shell-zeus-menu');
-for (var i = 0; i < menuExtensions.length; i++) {
-    var menuExtension = require(menuExtensions[i]);
-    var menu = menuExtension.getMenu();
-    mainmenu.push(menu);
+var perspectives = [];
+
+var perspectiveExtensions = extensions.getExtensions('launchpad-zeus-perspective');
+for (var i = 0; perspectiveExtensions !== null && i < perspectiveExtensions.length; i++) {
+    var perspectiveExtension = require(perspectiveExtensions[i]);
+    var perspective = perspectiveExtension.getPerspective();
+    perspectives.push(perspective);
 }
-mainmenu.sort(function(p, n) {
+
+perspectives.sort(function(p, n) {
 	return parseInt(p.order, 0) - parseInt(n.order, 0);
 });
 
-response.println(JSON.stringify(mainmenu));
+response.println(JSON.stringify(perspectives));

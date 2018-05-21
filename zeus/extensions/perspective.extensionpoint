@@ -1,4 +1,4 @@
 {
 	'description': 'Extension Point for the zeus Perspective Providers',
-	'name': 'shell-zeus-perspective'
+	'name': 'launchpad-zeus-perspective'
 }

@@ -21,6 +21,11 @@
 		"type": "git",
 		"branch": "master"
 	}, {
+		"guid": "zeus-applications-java",
+		"url": "https://github.com/dirigiblelabs/zeus-v3-java.git",
+		"type": "git",
+		"branch": "master"
+	}, {
 		"guid": "zeus-v3-accounts",
 		"url": "https://github.com/dirigiblelabs/zeus-v3-accounts.git",
 		"type": "git",

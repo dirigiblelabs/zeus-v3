@@ -23,6 +23,11 @@
 	}, {
 		"guid": "zeus-applications-java",
 		"url": "https://github.com/dirigiblelabs/zeus-v3-java.git",
+    "type": "git",
+		"branch": "master"
+	}, {
+		"guid": "zeus-applications-html5",
+		"url": "https://github.com/dirigiblelabs/zeus-v3-html5.git",
 		"type": "git",
 		"branch": "master"
 	}, {
